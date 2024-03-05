@@ -1,8 +1,12 @@
 package com.GreenMindNetwork.service.impl;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.GreenMindNetwork.payloads.ApiResponse;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +53,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserEditDto updateUser(UserEditDto userDto, Integer userId) {
+
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "id", userId));
 		user.setFname(userDto.getFname());
 		user.setLname(userDto.getLname());
@@ -81,6 +86,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDto registerUser(UserDto userDto) {
+		Optional<User> byEmail = this.userRepo.findByEmail(userDto.getEmail());
+		if(byEmail.isPresent()){
+			ApiResponse apiResponse=new ApiResponse("Email already exist",false);
+			return  this.modelMapper.map(apiResponse,UserDto.class);
+		}
 		User user = this.modelMapper.map(userDto, User.class);
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();

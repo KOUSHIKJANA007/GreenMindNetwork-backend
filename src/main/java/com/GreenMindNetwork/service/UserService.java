@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.GreenMindNetwork.payloads.UserDto;
 import com.GreenMindNetwork.payloads.UserEditDto;
+import jakarta.servlet.http.HttpSession;
 
 public interface UserService {
 	UserDto registerUser(UserDto userDto);

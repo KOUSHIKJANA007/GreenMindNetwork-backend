@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Getter
 @Setter
@@ -30,7 +31,6 @@ public class UserDto {
 	private String lname;
 	
 	@Email(message = "Enter valid email..")
-//	@UniqueElements(message = "Email already exists, enter anothor one")
 	private String email;
 	@NotNull(message = "Mobile number must not be null")
 	private long mobile;

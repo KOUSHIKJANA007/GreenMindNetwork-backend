@@ -1,5 +1,8 @@
 package com.GreenMindNetwork.controller;
 
+import com.GreenMindNetwork.payloads.*;
+import com.GreenMindNetwork.service.EmailService;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +12,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.GreenMindNetwork.entities.User;
 import com.GreenMindNetwork.exception.ApiException;
-import com.GreenMindNetwork.payloads.JwtAuthRequest;
-import com.GreenMindNetwork.payloads.JwtAuthResponse;
-import com.GreenMindNetwork.payloads.UserDto;
 import com.GreenMindNetwork.security.JwtTokenHelper;
 import com.GreenMindNetwork.service.UserService;
 
 import jakarta.validation.Valid;
+
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -42,7 +43,8 @@ public class AuthController {
 	
 	@Autowired
 	private ModelMapper modelMapper;
-	
+	@Autowired
+	private  EmailService emailService;
  
 	@PostMapping("/register")
 	public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserDto userDto){
