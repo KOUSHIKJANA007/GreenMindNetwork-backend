@@ -1,12 +1,11 @@
 package com.GreenMindNetwork.service.impl;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.GreenMindNetwork.payloads.ApiResponse;
-import jakarta.servlet.http.HttpSession;
+import com.GreenMindNetwork.payloads.EmailResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -72,6 +71,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void changePassword(EmailResponse emailResponse) {
+		User user = this.userRepo.findByEmail(emailResponse.getEmail()).orElseThrow(() -> new ResourceNotFoundException("User", "id", emailResponse.getEmail()));
+		user.setPassword(passwordEncoder.encode(emailResponse.getNewPassword()));
+		this.userRepo.save(user);
+	}
+
+	@Override
 	public List<UserDto> getAllUsers() {
 		List<User> users = this.userRepo.findAll();
 		List<UserDto> collectedUsers = users.stream().map((user)->this.modelMapper.map(user,UserDto.class)).collect(Collectors.toList());
@@ -87,9 +93,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto registerUser(UserDto userDto) {
 		Optional<User> byEmail = this.userRepo.findByEmail(userDto.getEmail());
-		if(byEmail.isPresent()){
-			ApiResponse apiResponse=new ApiResponse("Email already exist",false);
-			return  this.modelMapper.map(apiResponse,UserDto.class);
+		if (byEmail.isPresent()) {
+			ApiResponse apiResponse = new ApiResponse("Email already exist", false);
+			return this.modelMapper.map(apiResponse, UserDto.class);
 		}
 		User user = this.modelMapper.map(userDto, User.class);
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
