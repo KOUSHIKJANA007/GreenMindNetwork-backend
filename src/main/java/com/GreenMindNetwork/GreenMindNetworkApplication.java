@@ -38,7 +38,11 @@ public class GreenMindNetworkApplication implements CommandLineRunner {
 		Role role2=new Role();
 		role2.setId(AppConstants.NORMAL_USER);
 		role2.setRoleName("NORMAL_USER");
-		 List<Role> roles = List.of(role1,role2);
+
+		Role role3=new Role();
+		role3.setId(AppConstants.NGO_USER);
+		role3.setRoleName("NGO_USER");
+		 List<Role> roles = List.of(role1,role2,role3);
 		 this.roleRepo.saveAll(roles);
 		
 	}

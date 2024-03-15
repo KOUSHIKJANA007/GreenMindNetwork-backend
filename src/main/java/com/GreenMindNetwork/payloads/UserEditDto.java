@@ -32,4 +32,8 @@ public class UserEditDto {
 	private long mobile;
 	private String dob;
 	private String imageName;
+	private String youtubeLink;
+	private String twitterLink;
+	private String facebookLink;
+	private String instagramLink;
 }

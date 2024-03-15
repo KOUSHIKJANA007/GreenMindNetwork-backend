@@ -41,8 +41,11 @@ public class UserDto {
 	@NotBlank(message = "Please enter password")
 	@Size(min = 4,max=10)
 	private String password;
-	
-	
+
+	private String youtubeLink;
+	private String twitterLink;
+	private String facebookLink;
+	private String instagramLink;
 	
 	@JsonIgnore
 	public String getPassword() {

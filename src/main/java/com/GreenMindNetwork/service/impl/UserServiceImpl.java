@@ -45,6 +45,10 @@ public class UserServiceImpl implements UserService {
 		user.setMobile(userDto.getMobile());
 		user.setDob(userDto.getDob());
 		user.setImageName("default.jpg");
+		user.setInstagramLink(userDto.getInstagramLink().replace("https://",""));
+		user.setFacebookLink(userDto.getFacebookLink().replace("https://",""));
+		user.setYoutubeLink(userDto.getYoutubeLink().replace("https://",""));
+		user.setTwitterLink(userDto.getTwitterLink().replace("https://",""));
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		User savedUser = this.userRepo.save(user);
 		return this.modelMapper.map(savedUser, UserDto.class);
@@ -60,6 +64,10 @@ public class UserServiceImpl implements UserService {
 		user.setMobile(userDto.getMobile());
 		user.setDob(userDto.getDob());
 		user.setImageName(userDto.getImageName());
+		user.setInstagramLink(userDto.getInstagramLink().replace("https://",""));
+		user.setFacebookLink(userDto.getFacebookLink().replace("https://",""));
+		user.setYoutubeLink(userDto.getYoutubeLink().replace("https://",""));
+		user.setTwitterLink(userDto.getTwitterLink().replace("https://",""));
 		User savedUser = this.userRepo.save(user);
 		return this.modelMapper.map(savedUser, UserEditDto.class);
 	}

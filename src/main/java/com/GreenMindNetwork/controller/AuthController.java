@@ -51,8 +51,8 @@ public class AuthController {
 		UserDto registerUser = this.userService.registerUser(userDto);
 		return new ResponseEntity<UserDto>(registerUser,HttpStatus.CREATED);
 	}
-	
-	
+
+
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> login(@RequestBody JwtAuthRequest authRequest) throws Exception{
 		System.out.println("hello");
