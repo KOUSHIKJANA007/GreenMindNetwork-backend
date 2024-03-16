@@ -44,12 +44,13 @@ public class EventController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/{ngoId}")
+    @GetMapping("/ngo/{ngoId}")
     public ResponseEntity<List<EventDto>> getEventByNgo(@PathVariable Integer ngoId){
         List<EventDto> eventByNgo = this.eventService.getEventByNgo(ngoId);
         return ResponseEntity.ok(eventByNgo);
 
     }
+
     @PostMapping("/image/{eventId}")
     public ResponseEntity<EventDto> uploadEventImage(@RequestParam("image")MultipartFile image,@PathVariable Integer eventId) throws IOException {
         EventDto event = this.eventService.getEventById(eventId);

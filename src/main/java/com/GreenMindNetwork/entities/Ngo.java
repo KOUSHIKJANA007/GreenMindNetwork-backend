@@ -38,4 +38,6 @@ public class Ngo {
 
     @OneToMany(mappedBy = "ngo",cascade = CascadeType.ALL)
     private List<Event> event=new ArrayList<>();
+    @OneToMany(mappedBy = "ngo",cascade = CascadeType.ALL)
+    private List<NgoSocialImage> ngoSocialImages=new ArrayList<>();
 }
