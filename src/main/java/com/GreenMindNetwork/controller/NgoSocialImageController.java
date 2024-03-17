@@ -46,6 +46,12 @@ public class NgoSocialImageController {
         List<NgoSocialImageDto> postByNgo = this.ngoSocialImageService.getPostByNgo(ngoId);
         return ResponseEntity.ok(postByNgo);
     }
+
+    @GetMapping("/{socialId}")
+    public ResponseEntity<NgoSocialImageDto> getSocialPostById(@PathVariable Integer socialId){
+        NgoSocialImageDto ngoSocialImageById = this.ngoSocialImageService.getNgoSocialImageById(socialId);
+        return ResponseEntity.ok(ngoSocialImageById);
+    }
     @DeleteMapping("/{socialId}")
     public ResponseEntity<ApiResponse> deleteNgoSocialImage(@PathVariable Integer socialId){
         this.ngoSocialImageService.deleteNgoSocialImage(socialId);

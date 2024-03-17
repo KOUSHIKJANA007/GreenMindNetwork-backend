@@ -22,14 +22,14 @@ public class DonationController {
 	@Autowired
 	private DonationService donationService;
 	
-	@PostMapping("/donation/user/{userId}")
-	public ResponseEntity<String> createOrder(@RequestBody PaymentRequest paymentRequest,@PathVariable Integer userId) throws RazorpayException{
-		String createOrder = this.donationService.createOrder(paymentRequest,userId);
+	@PostMapping("/donation/user/{userId}/ngo/{ngoId}")
+	public ResponseEntity<String> createOrder(@RequestBody PaymentRequest paymentRequest,@PathVariable Integer userId,@PathVariable Integer ngoId) throws RazorpayException{
+		String createOrder = this.donationService.createOrder(paymentRequest,userId,ngoId);
 		return ResponseEntity.ok(createOrder);
 	}
-	@PutMapping("/donation")
-	public ResponseEntity<ApiResponse> createOrder(@RequestBody PaymentRequest paymentRequest) throws RazorpayException{
-		this.donationService.updateOrder(paymentRequest);
+	@PutMapping("/donation/{eventId}")
+	public ResponseEntity<ApiResponse> updateOrder(@RequestBody PaymentRequest paymentRequest,@PathVariable Integer eventId) throws RazorpayException{
+		this.donationService.updateOrder(paymentRequest,eventId);
 		ApiResponse apiResponse=new ApiResponse("payment done",true);
 		return ResponseEntity.ok(apiResponse);
 	}

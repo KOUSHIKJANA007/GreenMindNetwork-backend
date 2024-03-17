@@ -9,6 +9,6 @@ import com.razorpay.RazorpayException;
 public interface DonationService {
 
 	List<DonationDto> getDonationByUser();
-	String createOrder(PaymentRequest paymentRequest,Integer userId) throws RazorpayException ;
-	void updateOrder(PaymentRequest paymentRequest);
+	String createOrder(PaymentRequest paymentRequest,Integer userId,Integer ngoId) throws RazorpayException ;
+	void updateOrder(PaymentRequest paymentRequest,Integer eventId);
 }

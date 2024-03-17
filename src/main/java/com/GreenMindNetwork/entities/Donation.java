@@ -24,7 +24,8 @@ public class Donation {
 	private String paymentId;
 	@ManyToOne
 	private User user;
-	
+	@ManyToOne
+	private Ngo ngo;
 	private Date createDate;
 	
 }

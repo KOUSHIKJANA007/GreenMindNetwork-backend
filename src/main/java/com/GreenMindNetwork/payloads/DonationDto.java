@@ -2,6 +2,7 @@ package com.GreenMindNetwork.payloads;
 
 import java.util.Date;
 
+import com.GreenMindNetwork.entities.Ngo;
 import com.GreenMindNetwork.entities.User;
 
 import lombok.AllArgsConstructor;
@@ -21,5 +22,6 @@ public class DonationDto {
 	private String status;
 	private String paymentId;
 	private User user;
+	private Ngo ngo;
 	private Date createDate;
 }
