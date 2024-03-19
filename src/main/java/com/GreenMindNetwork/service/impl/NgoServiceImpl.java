@@ -28,6 +28,7 @@ public class NgoServiceImpl implements NgoService{
 
     @Autowired
     private RoleRepo roleRepo;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired

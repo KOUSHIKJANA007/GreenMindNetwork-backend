@@ -28,7 +28,7 @@ public class Ngo {
     private String slogan;
     @Column(length = 10000)
     private String description;
-    private Date establishedDate;
+    private String establishedDate;
     private String logo;
     private String identityOfHead;
     private String imageOfTax;
@@ -42,4 +42,6 @@ public class Ngo {
     private List<NgoSocialImage> ngoSocialImages=new ArrayList<>();
     @OneToMany(mappedBy = "ngo",cascade = CascadeType.ALL)
     private List<Donation> donations=new ArrayList<>();
+    @OneToOne(mappedBy = "ngo",cascade = CascadeType.ALL)
+    private Bank bank;
 }

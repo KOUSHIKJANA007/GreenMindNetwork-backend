@@ -31,7 +31,7 @@ public class NgoDto {
     @Size(min=500,max=10000,message = "Description should be minimum 100 letter and maximum 2000 letter")
     private String description;
     @NotNull
-    private Date establishedDate;
+    private String establishedDate;
     private String logo;
     private String identityOfHead;
     private String imageOfTax;

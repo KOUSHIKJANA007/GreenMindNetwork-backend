@@ -2,6 +2,7 @@ package com.GreenMindNetwork.controller;
 
 import com.GreenMindNetwork.payloads.ApiResponse;
 import com.GreenMindNetwork.payloads.NgoDto;
+import com.GreenMindNetwork.service.BankService;
 import com.GreenMindNetwork.service.FileService;
 import com.GreenMindNetwork.service.NgoService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,6 +26,8 @@ public class NgoController {
 
     @Autowired
     private NgoService ngoService;
+    @Autowired
+    private BankService bankService;
     @Value("${project.image.ngo}")
     private String path;
     @Autowired
@@ -32,6 +35,7 @@ public class NgoController {
     @PostMapping("/register/{userId}")
     public ResponseEntity<NgoDto> createNgo(@Valid @RequestBody NgoDto ngoDto, @PathVariable("userId") Integer userId){
         NgoDto ngo = this.ngoService.createNgo(ngoDto,userId);
+        this.bankService.createBank(ngo.getId());
         return new ResponseEntity<>(ngo, HttpStatus.CREATED);
     }
 
