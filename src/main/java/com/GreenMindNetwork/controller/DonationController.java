@@ -2,12 +2,7 @@ package com.GreenMindNetwork.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.GreenMindNetwork.payloads.ApiResponse;
 import com.GreenMindNetwork.payloads.PaymentRequest;
@@ -32,5 +27,10 @@ public class DonationController {
 		this.donationService.updateOrder(paymentRequest,eventId);
 		ApiResponse apiResponse=new ApiResponse("payment done",true);
 		return ResponseEntity.ok(apiResponse);
+	}
+	@GetMapping("/donation/user/{userId}")
+	public ResponseEntity<Integer> getTotalDonationAmount(@PathVariable Integer userId){
+		Integer totalDonationAmount = this.donationService.getTotalDonationAmount(userId);
+		return ResponseEntity.ok(totalDonationAmount);
 	}
 }

@@ -68,4 +68,12 @@ public class EventServiceImpl implements EventService {
        Event byId = this.eventRepo.findById(eventId).orElseThrow(()->new ResourceNotFoundException("Event","id",eventId));
         return this.modelMapper.map(byId,EventDto.class);
     }
+
+    @Override
+    public List<EventDto> getAllEvents() {
+        List<Event> events = this.eventRepo.findAll();
+        List<EventDto> list = events.stream().map((e) -> this.modelMapper.map(e, EventDto.class)).toList();
+
+        return list;
+    }
 }

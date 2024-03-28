@@ -10,4 +10,5 @@ public interface EventService {
     void deleteEvent(Integer eventId);
     List<EventDto> getEventByNgo(Integer ngoId);
     EventDto getEventById(Integer eventId);
+    List<EventDto> getAllEvents();
 }

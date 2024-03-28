@@ -4,6 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import com.GreenMindNetwork.config.AppConstants;
+import com.GreenMindNetwork.entities.Role;
+import com.GreenMindNetwork.entities.User;
+import com.GreenMindNetwork.exception.ResourceNotFoundException;
+import com.GreenMindNetwork.repositories.RoleRepo;
+import com.GreenMindNetwork.repositories.UserRepo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +43,10 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
+	@Autowired
+	private RoleRepo roleRepo;
+	@Autowired
+	private UserRepo userRepo;
 	@Autowired
 	private FileService fileService;
 	
@@ -61,6 +70,13 @@ public class UserController {
 	
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId){
+		Role role = this.roleRepo.findById(AppConstants.ADMIN_USER).get();
+		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "id", userId));
+
+		if(user.getRoles().contains(role)){
+			ApiResponse apiResponse=new ApiResponse("Admin can't delete",false);
+            return ResponseEntity.ok(apiResponse);
+		}
 		this.userService.deleteUser(userId);
 		ApiResponse apiResponse=new ApiResponse("user deleted successfully",true);
 		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.OK);

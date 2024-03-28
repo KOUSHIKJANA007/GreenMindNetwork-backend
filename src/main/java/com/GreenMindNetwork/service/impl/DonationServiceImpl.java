@@ -85,4 +85,14 @@ public class DonationServiceImpl implements DonationService{
 		this.donationRepo.save(findByOrderId);
 	}
 
+	@Override
+	public Integer getTotalDonationAmount(Integer userId) {
+		Integer totalDonateAmount = this.donationRepo.getTotalDonate(userId);
+		if(totalDonateAmount != null){
+			Integer totalAmount=(totalDonateAmount/100);
+			return totalAmount;
+		}
+		return null;
+	}
+
 }

@@ -45,10 +45,27 @@ public class UserServiceImpl implements UserService {
 		user.setMobile(userDto.getMobile());
 		user.setDob(userDto.getDob());
 		user.setImageName("default.jpg");
+		if(userDto.getInstagramLink()!=null){
 		user.setInstagramLink(userDto.getInstagramLink().replace("https://",""));
-		user.setFacebookLink(userDto.getFacebookLink().replace("https://",""));
-		user.setYoutubeLink(userDto.getYoutubeLink().replace("https://",""));
+		}else {
+			user.setInstagramLink(null);
+		}
+		if(userDto.getFacebookLink()!=null){
+			user.setFacebookLink(userDto.getFacebookLink().replace("https://",""));
+		}else {
+			user.setFacebookLink(null);
+		}
+		if(userDto.getYoutubeLink()!=null){
+			user.setYoutubeLink(userDto.getYoutubeLink().replace("https://",""));
+		}else {
+			user.setYoutubeLink(null);
+		}
+		if(userDto.getTwitterLink()!= null){
 		user.setTwitterLink(userDto.getTwitterLink().replace("https://",""));
+		}
+		else {
+			user.setTwitterLink(null);
+		}
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		User savedUser = this.userRepo.save(user);
 		return this.modelMapper.map(savedUser, UserDto.class);
@@ -64,17 +81,41 @@ public class UserServiceImpl implements UserService {
 		user.setMobile(userDto.getMobile());
 		user.setDob(userDto.getDob());
 		user.setImageName(userDto.getImageName());
-		user.setInstagramLink(userDto.getInstagramLink().replace("https://",""));
-		user.setFacebookLink(userDto.getFacebookLink().replace("https://",""));
-		user.setYoutubeLink(userDto.getYoutubeLink().replace("https://",""));
-		user.setTwitterLink(userDto.getTwitterLink().replace("https://",""));
+		if(userDto.getInstagramLink()!=null){
+			user.setInstagramLink(userDto.getInstagramLink().replace("https://",""));
+		}else {
+			user.setInstagramLink(null);
+		}
+		if(userDto.getFacebookLink()!=null){
+			user.setFacebookLink(userDto.getFacebookLink().replace("https://",""));
+		}else {
+			user.setFacebookLink(null);
+		}
+		if(userDto.getYoutubeLink()!=null){
+			user.setYoutubeLink(userDto.getYoutubeLink().replace("https://",""));
+		}else {
+			user.setYoutubeLink(null);
+		}
+		if(userDto.getTwitterLink()!= null){
+			user.setTwitterLink(userDto.getTwitterLink().replace("https://",""));
+		}
+		else {
+			user.setTwitterLink(null);
+		}
 		User savedUser = this.userRepo.save(user);
 		return this.modelMapper.map(savedUser, UserEditDto.class);
 	}
 
 	@Override
 	public void deleteUser(Integer userId) {
+		Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();
+		Role role1 = this.roleRepo.findById(AppConstants.NGO_USER).get();
+
+		List<Role> role11 = List.of(role1, role);
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "id", userId));
+
+		user.getRoles().removeAll(role11);
+		this.userRepo.save(user);
 		this.userRepo.delete(user);
 	}
 
@@ -113,6 +154,7 @@ public class UserServiceImpl implements UserService {
 		User savedUser = this.userRepo.save(user);
 		return this.modelMapper.map(savedUser, UserDto.class);
 	}
+
 
 	
 

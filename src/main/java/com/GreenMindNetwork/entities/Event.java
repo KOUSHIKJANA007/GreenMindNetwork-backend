@@ -14,6 +14,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
+    @Column(length = 10000)
     private String description;
     private Date createDate;
     private double targetAmount;

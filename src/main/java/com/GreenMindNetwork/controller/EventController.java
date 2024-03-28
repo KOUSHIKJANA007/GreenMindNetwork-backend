@@ -51,6 +51,17 @@ public class EventController {
 
     }
 
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDto> getEventById(@PathVariable Integer eventId){
+        EventDto eventById = this.eventService.getEventById(eventId);
+        return ResponseEntity.ok(eventById);
+
+    }
+    @GetMapping("/")
+    public ResponseEntity<List<EventDto>> getAllEvents(){
+        List<EventDto> allEvents = this.eventService.getAllEvents();
+        return ResponseEntity.ok(allEvents);
+    }
     @PostMapping("/image/{eventId}")
     public ResponseEntity<EventDto> uploadEventImage(@RequestParam("image")MultipartFile image,@PathVariable Integer eventId) throws IOException {
         EventDto event = this.eventService.getEventById(eventId);
