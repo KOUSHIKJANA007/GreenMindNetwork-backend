@@ -33,4 +33,9 @@ public class DonationController {
 		Integer totalDonationAmount = this.donationService.getTotalDonationAmount(userId);
 		return ResponseEntity.ok(totalDonationAmount);
 	}
+	@GetMapping("/donation/ngo/{ngoId}")
+	public ResponseEntity<Integer> getTotalDonationAmountByNgo(@PathVariable Integer ngoId){
+		Integer totalDonationAmountByNgo = this.donationService.getTotalDonationAmountByNgo(ngoId);
+		return ResponseEntity.ok(totalDonationAmountByNgo);
+	}
 }

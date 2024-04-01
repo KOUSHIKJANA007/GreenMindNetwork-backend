@@ -38,7 +38,7 @@ public class EventController {
         return new ResponseEntity<>(event, HttpStatus.OK);
     }
     @DeleteMapping("/{eventId}")
-    public ResponseEntity<ApiResponse> deleteEveent(@PathVariable Integer eventId){
+    public ResponseEntity<ApiResponse> deleteEveent(@PathVariable Integer eventId) throws IOException {
         this.eventService.deleteEvent(eventId);
         ApiResponse apiResponse=new ApiResponse("Event deleted successfully",true);
         return ResponseEntity.ok(apiResponse);
@@ -65,9 +65,31 @@ public class EventController {
     @PostMapping("/image/{eventId}")
     public ResponseEntity<EventDto> uploadEventImage(@RequestParam("image")MultipartFile image,@PathVariable Integer eventId) throws IOException {
         EventDto event = this.eventService.getEventById(eventId);
+        String oldImage = event.getImage();
         String uploadImage = this.fileService.uploadImage(path, image);
         event.setImage(uploadImage);
         EventDto eventDto = this.eventService.updateEvent(event, eventId);
+        if(!oldImage.equals("default.jpg")){
+            if (!eventDto.getImage().equals(oldImage)) {
+                Thread deleteOldImage = new Thread(() -> {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    boolean f = true;
+                    while (f) {
+                        try {
+                            this.fileService.deleteImage(path, oldImage);
+                            f=false;
+                        } catch (IOException e) {
+                            continue;
+                        }
+                    }
+                });
+                deleteOldImage.start();
+            }
+        }
         return  ResponseEntity.ok(eventDto);
     }
     @GetMapping(value = "/image/{imagename}",produces = MediaType.IMAGE_JPEG_VALUE)

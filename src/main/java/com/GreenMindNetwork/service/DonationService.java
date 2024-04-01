@@ -12,4 +12,5 @@ public interface DonationService {
 	String createOrder(PaymentRequest paymentRequest,Integer userId,Integer ngoId) throws RazorpayException ;
 	void updateOrder(PaymentRequest paymentRequest,Integer eventId);
 	Integer getTotalDonationAmount(Integer userId);
+	Integer getTotalDonationAmountByNgo(Integer ngoId);
 }

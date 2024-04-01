@@ -1,10 +1,14 @@
 package com.GreenMindNetwork.security;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.GreenMindNetwork.service.FileService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +17,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtTokenHelper {
+	@Autowired
+	private FileService fileService;
+	@Value("${project.image.user}")
+	private String userPath;
+	@Value("${project.image.event}")
+	private String eventPath;
 
 	// requirement :
 		public static final long JWT_TOKEN_VALIDITY = 2 * 60 * 60;
@@ -66,8 +76,13 @@ public class JwtTokenHelper {
 		}
 
 		// validate token
-		public Boolean validateToken(String token, UserDetails userDetails) {
+		public Boolean validateToken(String token, UserDetails userDetails) throws IOException {
 			final String username = getUsernameFromToken(token);
+//			if(isTokenExpired(token)){
+//				this.fileService.deleteAllTrashImage(userPath);
+//				this.fileService.deleteAllTrashImage(eventPath);
+//				System.out.println(eventPath);
+//			}
 			return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 		}
 }

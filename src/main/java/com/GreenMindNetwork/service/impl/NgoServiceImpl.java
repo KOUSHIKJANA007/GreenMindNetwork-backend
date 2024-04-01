@@ -10,12 +10,15 @@ import com.GreenMindNetwork.payloads.NgoDto;
 import com.GreenMindNetwork.repositories.NgoRepo;
 import com.GreenMindNetwork.repositories.RoleRepo;
 import com.GreenMindNetwork.repositories.UserRepo;
+import com.GreenMindNetwork.service.FileService;
 import com.GreenMindNetwork.service.NgoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,7 @@ public class NgoServiceImpl implements NgoService{
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRepo userRepo;
+
     @Override
     public NgoDto createNgo(NgoDto ngoDto,Integer userId) {
         User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
@@ -46,10 +50,10 @@ public class NgoServiceImpl implements NgoService{
         ngo.setSlogan(ngoDto.getSlogan());
         ngo.setDescription(ngoDto.getDescription());
         ngo.setMobile(ngoDto.getMobile());
-        ngo.setIdentityOfHead("identity.png");
-        ngo.setImageOfTax("tax.png");
-        ngo.setRegisterImage("proof.png");
-        ngo.setLogo("logo.png");
+        ngo.setIdentityOfHead("default.jpg");
+        ngo.setImageOfTax("default.jpg");
+        ngo.setRegisterImage("default.jpg");
+        ngo.setLogo("default.jpg");
         ngo.setUser(user);
         Role role = this.roleRepo.findById(AppConstants.NGO_USER).get();
         user.getRoles().add(role);
@@ -58,7 +62,7 @@ public class NgoServiceImpl implements NgoService{
     }
 
     @Override
-    public NgoDto updateNgo(NgoDto ngoDto, Integer ngoId) {
+    public NgoDto updateNgo(NgoDto ngoDto, Integer ngoId) throws IOException {
         Ngo ngo = this.ngoRepo.findById(ngoId).orElseThrow(() -> new ResourceNotFoundException("NGO", "id", ngoId));
         ngo.setName(ngoDto.getName());
         ngo.setEmail(ngoDto.getEmail());
@@ -77,8 +81,9 @@ public class NgoServiceImpl implements NgoService{
     }
 
     @Override
-    public void deleteNgo(Integer ngoId) {
+    public void deleteNgo(Integer ngoId) throws IOException {
         Ngo ngo = this.ngoRepo.findById(ngoId).orElseThrow(() -> new ResourceNotFoundException("NGO", "id", ngoId));
+
         this.ngoRepo.delete(ngo);
     }
 

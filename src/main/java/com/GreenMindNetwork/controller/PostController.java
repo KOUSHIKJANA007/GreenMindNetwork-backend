@@ -40,7 +40,7 @@ public class PostController {
 	@Autowired
 	private FileService fileService;
 	
-	@Value("${project.image}")
+	@Value("${project.image.post}")
 	private String path;
 	
 	@PostMapping("/post/{userId}")
@@ -49,13 +49,13 @@ public class PostController {
 		return new ResponseEntity<>(post,HttpStatus.CREATED);
 	}
 	@PutMapping("/post/{postId}")
-	public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,@PathVariable Integer postId){
+	public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,@PathVariable Integer postId) throws IOException {
 		PostDto updatePost = this.postService.updatePost(postDto, postId);
 		System.out.println(postDto);
 		return new ResponseEntity<>(updatePost,HttpStatus.OK);
 	}
 	@DeleteMapping("/post/{postId}")
-	public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId){
+	public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId) throws IOException {
 		this.postService.deletePost(postId);
 		ApiResponse response=new ApiResponse("post successfully deleted",true);
 		return ResponseEntity.ok(response);
@@ -98,9 +98,31 @@ public class PostController {
 	@PostMapping(value = "/post/image/{postId}")
 	public ResponseEntity<PostDto> uploadImage(@PathVariable Integer postId,@RequestParam("image") MultipartFile image) throws IOException{
 		PostDto post = this.postService.getSinglePost(postId);
+		String oldImage = post.getImageName();
 		String uploadImage = this.fileService.uploadImage(path, image);
 		post.setImageName(uploadImage);
 		PostDto updatePost = this.postService.updatePost(post, postId);
+		if (!oldImage.equals("default.jpg")){
+			if (!updatePost.getImageName().equals(oldImage)){
+				Thread deleteOldImage=new Thread(()->{
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+					boolean f=true;
+					while (f){
+                        try {
+                            this.fileService.deleteImage(path,oldImage);
+							f=false;
+                        } catch (IOException e) {
+                            continue;
+                        }
+                    }
+                });
+				deleteOldImage.start();
+			}
+		}
 		return new ResponseEntity<PostDto>(updatePost,HttpStatus.OK);
 	}
 	
@@ -109,6 +131,5 @@ public class PostController {
 		InputStream image = this.fileService.getResource(path, imagename);
 		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
 		StreamUtils.copy(image, response.getOutputStream());
-		
 	}
 }

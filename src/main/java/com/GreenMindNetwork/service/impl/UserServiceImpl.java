@@ -1,13 +1,18 @@
 package com.GreenMindNetwork.service.impl;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.GreenMindNetwork.entities.BlockStatus;
 import com.GreenMindNetwork.payloads.ApiResponse;
 import com.GreenMindNetwork.payloads.EmailResponse;
+import com.GreenMindNetwork.repositories.BlockStatusRepo;
+import com.GreenMindNetwork.service.FileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +37,14 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+	@Autowired
+	private BlockStatusRepo blockStatusRepo;
 	@Autowired
 	private RoleRepo roleRepo;
+	@Autowired
+	private FileService fileService;
+	@Value("${project.image.user}")
+	private String path;
 
 	@Override
 	public UserDto createUser(UserDto userDto) {
@@ -44,7 +54,7 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(userDto.getEmail());
 		user.setMobile(userDto.getMobile());
 		user.setDob(userDto.getDob());
-		user.setImageName("default.jpg");
+		user.setImageName("default.png");
 		if(userDto.getInstagramLink()!=null){
 		user.setInstagramLink(userDto.getInstagramLink().replace("https://",""));
 		}else {
@@ -72,8 +82,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserEditDto updateUser(UserEditDto userDto, Integer userId) {
-
+	public UserEditDto updateUser(UserEditDto userDto, Integer userId) throws IOException {
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "id", userId));
 		user.setFname(userDto.getFname());
 		user.setLname(userDto.getLname());
@@ -107,15 +116,26 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void deleteUser(Integer userId) {
+	public void deleteUser(Integer userId) throws IOException {
 		Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();
 		Role role1 = this.roleRepo.findById(AppConstants.NGO_USER).get();
-
+		BlockStatus blockStatus = this.blockStatusRepo.findById(AppConstants.UNBLOCKED).get();
 		List<Role> role11 = List.of(role1, role);
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "id", userId));
-
 		user.getRoles().removeAll(role11);
+		user.getStatus().remove(blockStatus);
 		this.userRepo.save(user);
+		boolean f=true;
+		if(!user.getImageName().equals("default.png")){
+			while (f){
+				try {
+					this.fileService.deleteImage(path,user.getImageName());
+					f=false;
+				} catch (IOException e) {
+					continue;
+				}
+			}
+		}
 		this.userRepo.delete(user);
 	}
 
@@ -140,6 +160,36 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void blockUser(Integer userId) {
+		BlockStatus blockStatus = this.blockStatusRepo.findById(AppConstants.UNBLOCKED).get();
+		BlockStatus blockStatus1 = this.blockStatusRepo.findById(AppConstants.BLOCKED).get();
+		User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+		user.getStatus().remove(blockStatus);
+		user.getStatus().add(blockStatus1);
+		this.userRepo.save(user);
+	}
+
+	@Override
+	public void unBlockUser(Integer userId) {
+		BlockStatus blockStatus1 = this.blockStatusRepo.findById(AppConstants.BLOCKED).get();
+		BlockStatus blockStatus = this.blockStatusRepo.findById(AppConstants.UNBLOCKED).get();
+		User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+		user.getStatus().remove(blockStatus1);
+		user.getStatus().add(blockStatus);
+		this.userRepo.save(user);
+	}
+
+	@Override
+	public boolean isBlocked(String username) {
+		BlockStatus blockStatus = this.blockStatusRepo.findById(AppConstants.BLOCKED).get();
+		User user = this.userRepo.findByEmail(username).orElseThrow(() -> new ResourceNotFoundException("User", "id", username));
+		if (user.getStatus().contains(blockStatus)){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public UserDto registerUser(UserDto userDto) {
 		Optional<User> byEmail = this.userRepo.findByEmail(userDto.getEmail());
 		if (byEmail.isPresent()) {
@@ -150,7 +200,9 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		Role role = this.roleRepo.findById(AppConstants.NORMAL_USER).get();
 		user.getRoles().add(role);
-		user.setImageName("default.jpg");
+		BlockStatus blockStatus = this.blockStatusRepo.findById(AppConstants.UNBLOCKED).get();
+		user.getStatus().add(blockStatus);
+		user.setImageName("default.png");
 		User savedUser = this.userRepo.save(user);
 		return this.modelMapper.map(savedUser, UserDto.class);
 	}

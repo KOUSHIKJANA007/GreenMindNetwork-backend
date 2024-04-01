@@ -52,7 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 		else {
 			System.out.println("token not valid");
 		}
-		
 		if(username != null && SecurityContextHolder.getContext().getAuthentication()==null) {
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 			if(this.jwtTokenHelper.validateToken(token, userDetails)) {

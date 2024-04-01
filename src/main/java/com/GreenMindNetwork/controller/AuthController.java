@@ -2,9 +2,10 @@ package com.GreenMindNetwork.controller;
 
 import com.GreenMindNetwork.payloads.*;
 import com.GreenMindNetwork.service.EmailService;
-import jakarta.servlet.http.HttpSession;
+import com.GreenMindNetwork.service.FileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,10 +13,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.GreenMindNetwork.entities.User;
 import com.GreenMindNetwork.exception.ApiException;
@@ -24,7 +22,7 @@ import com.GreenMindNetwork.service.UserService;
 
 import jakarta.validation.Valid;
 
-import java.util.Random;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -40,12 +38,21 @@ public class AuthController {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
+	@Autowired
+	private FileService fileService;
 	@Autowired
 	private ModelMapper modelMapper;
 	@Autowired
 	private  EmailService emailService;
- 
+	@Value("${project.image.user}")
+	private String path;
+
+	@Value("${project.image.event}")
+	private String eventPath;
+	@Value("${project.image.social}")
+	private String socialImagePath;
+	@Value("${project.image.post}")
+	private String postPath;
 	@PostMapping("/register")
 	public ResponseEntity<UserDto> registerUser(@Valid @RequestBody UserDto userDto){
 		UserDto registerUser = this.userService.registerUser(userDto);
@@ -55,9 +62,12 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public ResponseEntity<JwtAuthResponse> login(@RequestBody JwtAuthRequest authRequest) throws Exception{
-		System.out.println("hello");
+		boolean blocked = this.userService.isBlocked(authRequest.getUsername());
+		if(blocked){
+			throw new ApiException("Your account is blocked by Admin for furthar information contact with Admin");
+		}
 		this.authenticate(authRequest.getUsername(), authRequest.getPassword());
-		System.out.println("hi");
+
 		UserDetails userDtails = this.userDetailsService.loadUserByUsername(authRequest.getUsername());
 		String generatedToken = this.jwtTokenHelper.generateToken(userDtails);
 		
@@ -67,7 +77,7 @@ public class AuthController {
 		authResponse.setUser(this.modelMapper.map((User)userDtails, UserDto.class));
 		return ResponseEntity.ok(authResponse);
 	}
-	
+
 	private void authenticate(String username, String password) throws Exception {
 		UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(username, password);
 		try {

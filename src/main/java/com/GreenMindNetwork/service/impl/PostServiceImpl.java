@@ -1,11 +1,14 @@
 package com.GreenMindNetwork.service.impl;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.GreenMindNetwork.service.FileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +33,11 @@ public class PostServiceImpl implements PostService {
 	private PostRepo postRepo;
 	@Autowired
 	private UserRepo userRepo;
+	@Autowired
+	private FileService fileService;
 
-
+	@Value("${project.image.post}")
+	private String path;
 	@Override
 	public PostDto createPost(PostDto postDto,Integer userId) {
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("user", "id", userId));
@@ -40,7 +46,7 @@ public class PostServiceImpl implements PostService {
 		post.setTitle(postDto.getTitle());
 		post.setSubTitle(postDto.getSubTitle());
 		post.setContent(postDto.getContent());
-		post.setImageName("default.png");
+		post.setImageName("default.jpg");
 		post.setPostDate(new Date());
 		post.setUser(user);
 		Post savedPost = this.postRepo.save(post);
@@ -48,7 +54,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public PostDto updatePost(PostDto postDto, Integer postId) {
+	public PostDto updatePost(PostDto postDto, Integer postId) throws IOException {
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "id", postId));
 		post.setTitle(postDto.getTitle());
 		post.setSubTitle(postDto.getSubTitle());
@@ -59,8 +65,17 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public void deletePost(Integer postId) {
+	public void deletePost(Integer postId) throws IOException {
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "id", postId));
+		boolean f=true;
+		while (f){
+			try {
+				this.fileService.deleteImage(path,post.getImageName());
+				f=false;
+			} catch (IOException e) {
+				continue;
+			}
+		}
 		this.postRepo.delete(post);
 	}
 

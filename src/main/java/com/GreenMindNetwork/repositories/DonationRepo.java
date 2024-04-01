@@ -12,4 +12,6 @@ public interface DonationRepo extends JpaRepository<Donation, Long>{
 	Donation findByOrderId(String orderId);
 	@Query("select SUM(p.amount) from Donation p where p.user.id like :userId and p.status='paid'")
 	Integer getTotalDonate(@Param("userId") Integer userId);
+	@Query("select SUM(p.amount) from Donation p where p.ngo.id like :ngoId and p.status='paid'")
+	Integer getTotalNgoAmount(@Param("ngoId") Integer ngoId);
 }

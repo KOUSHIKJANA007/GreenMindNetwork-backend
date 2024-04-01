@@ -40,12 +40,12 @@ public class NgoController {
     }
 
     @PutMapping("/edit/{ngoId}")
-    public ResponseEntity<NgoDto> updateNgo(@Valid @RequestBody NgoDto ngoDto,@PathVariable Integer ngoId){
+    public ResponseEntity<NgoDto> updateNgo(@Valid @RequestBody NgoDto ngoDto,@PathVariable Integer ngoId) throws IOException {
         NgoDto ngo = this.ngoService.updateNgo(ngoDto, ngoId);
         return ResponseEntity.ok(ngo);
     }
     @DeleteMapping("/delete/{ngoId}")
-    public ResponseEntity<ApiResponse> deleteNgo(@PathVariable Integer ngoId){
+    public ResponseEntity<ApiResponse> deleteNgo(@PathVariable Integer ngoId) throws IOException {
         this.ngoService.deleteNgo(ngoId);
         ApiResponse apiResponse=new ApiResponse("NGO deleted successfully",true);
         return ResponseEntity.ok(apiResponse);
@@ -95,8 +95,11 @@ public class NgoController {
         String uploadImage = this.fileService.uploadImage(path, image);
         ngoById.setLogo(uploadImage);
         NgoDto ngoDto = this.ngoService.updateNgo(ngoById, ngoId);
+
         return ResponseEntity.ok(ngoDto);
     }
+
+
     @GetMapping(value = "/image/{imagename}",produces = MediaType.IMAGE_JPEG_VALUE)
     public void ShowImage(@PathVariable String imagename, HttpServletResponse response) throws IOException{
         InputStream image = this.fileService.getResource(path, imagename);

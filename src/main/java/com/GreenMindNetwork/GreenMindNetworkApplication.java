@@ -3,8 +3,10 @@ package com.GreenMindNetwork;
 import java.util.List;
 import java.util.Optional;
 
+import com.GreenMindNetwork.entities.BlockStatus;
 import com.GreenMindNetwork.entities.User;
 import com.GreenMindNetwork.payloads.UserDto;
+import com.GreenMindNetwork.repositories.BlockStatusRepo;
 import com.GreenMindNetwork.repositories.UserRepo;
 import com.GreenMindNetwork.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -25,6 +27,8 @@ public class GreenMindNetworkApplication implements CommandLineRunner {
 	private RoleRepo roleRepo;
 	@Autowired
 	private UserRepo userRepo;
+	@Autowired
+	private BlockStatusRepo blockStatusRepo;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
@@ -52,6 +56,17 @@ public class GreenMindNetworkApplication implements CommandLineRunner {
 			role3.setRoleName("NGO_USER");
 			List<Role> roles = List.of(role1,role2,role3);
 			this.roleRepo.saveAll(roles);
+			BlockStatus blockStatus1=new BlockStatus();
+			blockStatus1.setId(AppConstants.BLOCKED);
+			blockStatus1.setStatus("BLOCKED");
+
+			BlockStatus blockStatus2=new BlockStatus();
+			blockStatus2.setId(AppConstants.UNBLOCKED);
+			blockStatus2.setStatus("UNBLOCKED");
+
+			List<BlockStatus> blockStatus11 = List.of(blockStatus1, blockStatus2);
+			this.blockStatusRepo.saveAll(blockStatus11);
+
 		}catch (Exception e){
 			e.fillInStackTrace();
 		}

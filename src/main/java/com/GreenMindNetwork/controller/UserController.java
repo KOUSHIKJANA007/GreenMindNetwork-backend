@@ -3,6 +3,9 @@ package com.GreenMindNetwork.controller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.GreenMindNetwork.config.AppConstants;
 import com.GreenMindNetwork.entities.Role;
@@ -53,7 +56,7 @@ public class UserController {
     @Autowired
 	private ModelMapper modelMapper;
 	
-	@Value("${project.image}")
+	@Value("${project.image.user}")
 	private String path;
 	
 	@PostMapping("/")
@@ -63,13 +66,13 @@ public class UserController {
 	}
 	
 	@PutMapping("/{userId}")
-	public ResponseEntity<UserEditDto> updateUser(@Valid @RequestBody UserEditDto userDto,@PathVariable Integer userId){
+	public ResponseEntity<UserEditDto> updateUser(@Valid @RequestBody UserEditDto userDto,@PathVariable Integer userId) throws IOException {
 		UserEditDto updateUser = this.userService.updateUser(userDto, userId);
 		return ResponseEntity.ok(updateUser);
 	}
 	
 	@DeleteMapping("/{userId}")
-	public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId){
+	public ResponseEntity<ApiResponse> deleteUser(@PathVariable Integer userId) throws IOException {
 		Role role = this.roleRepo.findById(AppConstants.ADMIN_USER).get();
 		User user = this.userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("User", "id", userId));
 
@@ -92,17 +95,61 @@ public class UserController {
 		UserDto userById = this.userService.getUserById(userId);
 		return new ResponseEntity<>(userById,HttpStatus.OK);
 	}
+	@GetMapping("/block/{userId}")
+	public ResponseEntity<ApiResponse> blockUser(@PathVariable Integer userId){
+		this.userService.blockUser(userId);
+		ApiResponse apiResponse=new ApiResponse("user blocked",true);
+		return ResponseEntity.ok(apiResponse);
+	}
+	@GetMapping("/unblock/{userId}")
+	public ResponseEntity<ApiResponse> unBlockUser(@PathVariable Integer userId){
+		this.userService.unBlockUser(userId);
+		ApiResponse apiResponse=new ApiResponse("user unblocked",true);
+		return ResponseEntity.ok(apiResponse);
+	}
+	@GetMapping("/isBlocked/{username}")
+	public ResponseEntity<ApiResponse> isBlocked(@PathVariable String username){
+		boolean blocked = this.userService.isBlocked(username);
+		if (blocked){
+			ApiResponse apiResponse=new ApiResponse("user blocked",false);
+			return new ResponseEntity<>(apiResponse,HttpStatus.BAD_REQUEST);
+		}
+		return ResponseEntity.ok(new ApiResponse("",true));
+	}
+
+
 	@PostMapping(value = "/image/upload/{userId}")
 	public ResponseEntity<UserEditDto> uploadImage(
 			@PathVariable("userId") Integer userId,
-			@RequestParam("image") MultipartFile image) throws IOException{
-		
+			@RequestParam("image") MultipartFile image) throws IOException, InterruptedException {
+
 		UserDto userDto = this.userService.getUserById(userId);
+		String oldImage = userDto.getImageName();
 		UserEditDto userEdit = this.modelMapper.map(userDto, UserEditDto.class);
-		String uploadImage = this.fileService.uploadImage(path,image);
+		String uploadImage=this.fileService.uploadImage(path, image);
 		userEdit.setImageName(uploadImage);
-		
 		UserEditDto updatePost = this.userService.updateUser(userEdit, userId);
+		if(!oldImage.equals("default.png")){
+			if(!updatePost.getImageName().equals(oldImage)){
+				Thread deleteOldImage=new Thread(()->{
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                   boolean f=true;
+					while (f){
+						try {
+							this.fileService.deleteImage(path,oldImage);
+							f=false;
+						} catch (IOException e) {
+							continue;
+						}
+					}
+                });
+				deleteOldImage.start();
+			}
+		}
 		return new ResponseEntity<>(updatePost,HttpStatus.OK);
 	}
 	

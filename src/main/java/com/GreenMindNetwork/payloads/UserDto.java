@@ -3,6 +3,7 @@ package com.GreenMindNetwork.payloads;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.GreenMindNetwork.entities.BlockStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -57,6 +58,7 @@ public class UserDto {
 		this.password=password;
 	}
 	private Set<RoleDto> roles=new HashSet<>();
+	private Set<BlockStatusDto> status=new HashSet<>();
 	
 	
 }

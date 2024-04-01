@@ -86,13 +86,22 @@ public class DonationServiceImpl implements DonationService{
 	}
 
 	@Override
+	public Integer getTotalDonationAmountByNgo(Integer ngoId) {
+		Integer totalNgoAmount = this.donationRepo.getTotalNgoAmount(ngoId);
+		if(totalNgoAmount==null){
+			return 0;
+		}
+        return totalNgoAmount/100;
+	}
+
+	@Override
 	public Integer getTotalDonationAmount(Integer userId) {
 		Integer totalDonateAmount = this.donationRepo.getTotalDonate(userId);
+		int totalAmount=0;
 		if(totalDonateAmount != null){
-			Integer totalAmount=(totalDonateAmount/100);
-			return totalAmount;
-		}
-		return null;
-	}
+			totalAmount=(totalDonateAmount/100);
+        }
+        return totalAmount;
+    }
 
 }

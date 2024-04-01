@@ -7,10 +7,13 @@ import com.GreenMindNetwork.payloads.EventDto;
 import com.GreenMindNetwork.repositories.EventRepo;
 import com.GreenMindNetwork.repositories.NgoRepo;
 import com.GreenMindNetwork.service.EventService;
+import com.GreenMindNetwork.service.FileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +27,10 @@ public class EventServiceImpl implements EventService {
     private EventRepo eventRepo;
     @Autowired
     private NgoRepo ngoRepo;
+    @Autowired
+    private FileService fileService;
+    @Value("${project.image.event}")
+    private String path;
     @Override
     public EventDto createEvent(EventDto eventDto, Integer ngoId) {
         Ngo ngo = this.ngoRepo.findById(ngoId).orElseThrow(() -> new ResourceNotFoundException("Ngo", "id", ngoId));
@@ -32,7 +39,7 @@ public class EventServiceImpl implements EventService {
         event.setCreateDate(new Date());
         event.setDescription(eventDto.getDescription());
         event.setTargetAmount(eventDto.getTargetAmount());
-        event.setImage(eventDto.getImage());
+        event.setImage("default.jpg");
         event.setNgo(ngo);
         Event savedEvent = this.eventRepo.save(event);
         return this.modelMapper.map(savedEvent,EventDto.class);
@@ -50,8 +57,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void deleteEvent(Integer eventId) {
+    public void deleteEvent(Integer eventId) throws IOException {
         Event event = this.eventRepo.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event", "id", eventId));
+        boolean f = true;
+        while (f) {
+            try {
+                this.fileService.deleteImage(path, event.getImage());
+                f=false;
+            } catch (IOException e) {
+                continue;
+            }
+        }
         this.eventRepo.delete(event);
     }
 
