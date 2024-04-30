@@ -92,4 +92,17 @@ public class EventServiceImpl implements EventService {
 
         return list;
     }
+
+    @Override
+    public Integer getTotalEvent() {
+        List<Event> allEvents = this.eventRepo.findAll();
+        return allEvents.size();
+    }
+
+    @Override
+    public Integer getTotalEventByNgo(Integer ngoId) {
+        Ngo ngo = this.ngoRepo.findById(ngoId).orElseThrow(() -> new ResourceNotFoundException("Ngo", "id", ngoId));
+        List<Event> byNgo = this.eventRepo.findByNgo(ngo);
+        return byNgo.size();
+    }
 }

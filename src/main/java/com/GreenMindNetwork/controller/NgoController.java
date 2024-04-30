@@ -65,6 +65,11 @@ public class NgoController {
         NgoDto ngoByUser = this.ngoService.getNgoByUser(userId);
         return ResponseEntity.ok(ngoByUser);
     }
+    @GetMapping("/length")
+    public ResponseEntity<Integer> getTotalNgo(){
+        Integer totalNgo = this.ngoService.getTotalNgo();
+        return ResponseEntity.ok(totalNgo);
+    }
     @PostMapping("/image/uploadIdentity/{ngoId}")
     public ResponseEntity<NgoDto> uploadIdentityImage(@RequestParam("image")MultipartFile image,@PathVariable Integer ngoId) throws IOException {
         NgoDto ngoById = this.ngoService.getNgoById(ngoId);

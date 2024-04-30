@@ -12,4 +12,5 @@ public interface NgoService {
     List<NgoDto> getAllNgo();
     NgoDto getNgoById(Integer ngoId);
     NgoDto getNgoByUser(Integer userId);
+    Integer getTotalNgo();
 }

@@ -58,6 +58,11 @@ public class UserController {
 	
 	@Value("${project.image.user}")
 	private String path;
+
+	@GetMapping("/test")
+	public String test(){
+		return "all done koushik";
+	}
 	
 	@PostMapping("/")
 	public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto){
@@ -93,6 +98,11 @@ public class UserController {
 	@GetMapping("/{userId}")
 	public ResponseEntity<UserDto> getUserById(@PathVariable Integer userId){
 		UserDto userById = this.userService.getUserById(userId);
+		return new ResponseEntity<>(userById,HttpStatus.OK);
+	}
+	@GetMapping("/email/{email}")
+	public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email){
+		UserDto userById = this.userService.getUserByEmail(email);
 		return new ResponseEntity<>(userById,HttpStatus.OK);
 	}
 	@GetMapping("/block/{userId}")

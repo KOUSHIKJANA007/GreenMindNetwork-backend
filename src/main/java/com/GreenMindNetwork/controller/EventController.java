@@ -57,6 +57,17 @@ public class EventController {
         return ResponseEntity.ok(eventById);
 
     }
+    @GetMapping("/length")
+    public ResponseEntity<Integer> getTotalEvent(){
+        Integer totalEvent = this.eventService.getTotalEvent();
+        return ResponseEntity.ok(totalEvent);
+
+    } @GetMapping("/length/{ngoId}")
+    public ResponseEntity<Integer> getTotalEventByNgo(@PathVariable Integer ngoId){
+        Integer totalEventByNgo = this.eventService.getTotalEventByNgo(ngoId);
+        return ResponseEntity.ok(totalEventByNgo);
+
+    }
     @GetMapping("/")
     public ResponseEntity<List<EventDto>> getAllEvents(){
         List<EventDto> allEvents = this.eventService.getAllEvents();

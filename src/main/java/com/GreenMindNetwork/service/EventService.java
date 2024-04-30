@@ -12,4 +12,6 @@ public interface EventService {
     List<EventDto> getEventByNgo(Integer ngoId);
     EventDto getEventById(Integer eventId);
     List<EventDto> getAllEvents();
+    Integer getTotalEvent();
+    Integer getTotalEventByNgo(Integer ngoId);
 }

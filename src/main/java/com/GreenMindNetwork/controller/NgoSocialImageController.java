@@ -46,7 +46,16 @@ public class NgoSocialImageController {
         List<NgoSocialImageDto> postByNgo = this.ngoSocialImageService.getPostByNgo(ngoId);
         return ResponseEntity.ok(postByNgo);
     }
-
+    @GetMapping("/length")
+    public ResponseEntity<Integer> getTotalSocialPost(){
+        Integer totalSocialPosts = this.ngoSocialImageService.getTotalSocialPosts();
+        return ResponseEntity.ok(totalSocialPosts);
+    }
+    @GetMapping("/ngo/length/{ngoId}")
+    public ResponseEntity<Integer> getTotalSocialPostByNgo(@PathVariable Integer ngoId){
+        Integer totalSocialPosts = this.ngoSocialImageService.getTotalSocialPostByNgo(ngoId);
+        return ResponseEntity.ok(totalSocialPosts);
+    }
     @GetMapping("/{socialId}")
     public ResponseEntity<NgoSocialImageDto> getSocialPostById(@PathVariable Integer socialId){
         NgoSocialImageDto ngoSocialImageById = this.ngoSocialImageService.getNgoSocialImageById(socialId);

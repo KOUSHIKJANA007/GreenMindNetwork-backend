@@ -11,4 +11,6 @@ public interface NgoSocialImageService {
     List<NgoSocialImageDto> getPostByNgo(Integer ngoId);
     NgoSocialImageDto updateNgoSocialImage(NgoSocialImageDto ngoSocialImageDto,Integer socialId) throws IOException;
     void deleteNgoSocialImage(Integer socialId) throws IOException;
+    Integer getTotalSocialPosts();
+    Integer getTotalSocialPostByNgo(Integer ngoId);
 }

@@ -81,4 +81,17 @@ public class NgoSocialImageServiceImpl implements NgoSocialImageService {
         }
         this.ngoSocialImageRepo.delete(ngoSocialImage);
     }
+
+    @Override
+    public Integer getTotalSocialPosts() {
+        List<NgoSocialImage> allposts = this.ngoSocialImageRepo.findAll();
+        return allposts.size();
+    }
+
+    @Override
+    public Integer getTotalSocialPostByNgo(Integer ngoId) {
+        Ngo ngo = this.ngoRepo.findById(ngoId).orElseThrow(() -> new ResourceNotFoundException("Ngo", "id", ngoId));
+        List<NgoSocialImage> byNgo = this.ngoSocialImageRepo.findByNgo(ngo);
+        return byNgo.size();
+    }
 }

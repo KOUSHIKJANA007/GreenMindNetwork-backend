@@ -16,6 +16,7 @@ public interface UserService {
 	void changePassword(EmailResponse emailResponse);
 	List<UserDto> getAllUsers();
 	UserDto getUserById(Integer userId);
+	UserDto getUserByEmail(String email);
 	void blockUser(Integer userId);
 	void unBlockUser(Integer userId);
 	boolean isBlocked(String username);

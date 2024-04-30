@@ -116,7 +116,7 @@ public class SecurityConfig{
 	public static CorsConfigurationSource configurationSource() {
 		var corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowedMethods(List.of("*"));
-		corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/"));
+		corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/","http://13.201.209.254"));
 		corsConfiguration.addAllowedHeader("Authorization");
 		corsConfiguration.addAllowedHeader("Content-Type");
 		corsConfiguration.addAllowedHeader("Accept");
@@ -125,6 +125,7 @@ public class SecurityConfig{
 		corsConfiguration.addAllowedMethod("PUT");
 		corsConfiguration.addAllowedMethod("DELETE");
 		corsConfiguration.addAllowedMethod("OPTIONS");
+		corsConfiguration.setAllowCredentials(true);
 		corsConfiguration.setMaxAge(3600L);
 		
 		

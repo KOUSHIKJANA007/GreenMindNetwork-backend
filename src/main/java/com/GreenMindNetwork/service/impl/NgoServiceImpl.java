@@ -111,4 +111,10 @@ public class NgoServiceImpl implements NgoService{
         }
         return this.modelMapper.map(byUser,NgoDto.class);
     }
+
+    @Override
+    public Integer getTotalNgo() {
+        List<Ngo> allNgo = this.ngoRepo.findAll();
+        return allNgo.size();
+    }
 }

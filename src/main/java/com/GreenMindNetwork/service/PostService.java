@@ -15,4 +15,5 @@ public interface PostService {
 	PostDto getSinglePost(Integer postId);
 	PostResponse getPostByUser(Integer userId,Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
 	PostResponse searchPost(String keyword,Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
+	Integer getTotalPosts();
 }

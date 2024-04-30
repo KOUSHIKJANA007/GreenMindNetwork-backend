@@ -74,6 +74,11 @@ public class PostController {
 		PostDto singlePost = this.postService.getSinglePost(postId);
 		return ResponseEntity.ok(singlePost);
 	}
+	@GetMapping("/post/length")
+	public ResponseEntity<Integer> getTotalPosts(){
+		Integer totalPosts = this.postService.getTotalPosts();
+		return ResponseEntity.ok(totalPosts);
+	}
 	
 	@GetMapping("/post/user/{userId}")
 	public ResponseEntity<PostResponse> getPostByUser(@PathVariable Integer userId,

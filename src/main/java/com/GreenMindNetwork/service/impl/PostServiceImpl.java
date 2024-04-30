@@ -157,4 +157,9 @@ public class PostServiceImpl implements PostService {
 		return postResponse;
 	}
 
+	@Override
+	public Integer getTotalPosts() {
+		List<Post> allPosts = this.postRepo.findAll();
+		return allPosts.size();
+	}
 }
