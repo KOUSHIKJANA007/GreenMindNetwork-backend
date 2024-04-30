@@ -3,6 +3,7 @@ package com.GreenMindNetwork.controller;
 import com.GreenMindNetwork.entities.Message;
 import com.GreenMindNetwork.entities.User;
 import com.GreenMindNetwork.exception.ResourceNotFoundException;
+import com.GreenMindNetwork.payloads.ApiResponse;
 import com.GreenMindNetwork.payloads.MessageDto;
 import com.GreenMindNetwork.repositories.MessageRepo;
 import com.GreenMindNetwork.repositories.UserRepo;
@@ -12,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -30,7 +28,6 @@ public class MessageController {
     private MessageRepo messageRepo;
     @Autowired
     private MessageService messageService;
-
     @MessageMapping("/message")
     public ResponseEntity<MessageDto> sendMessageTo(@RequestBody MessageDto messageDto){
         User user = this.userRepo.findById(messageDto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("User", "id", messageDto.getUserId()));
@@ -54,5 +51,9 @@ public class MessageController {
     public ResponseEntity<List<Message>> getMessageByUser(@PathVariable Integer userId){
         return ResponseEntity.ok(this.messageService.getMessageByUser(userId));
     }
-
+    @DeleteMapping("/message/delete/{userId}")
+    public ResponseEntity<ApiResponse> deleteChatByUser(@PathVariable Integer userId){
+        this.messageService.deleteChatByUserId(userId);
+        return ResponseEntity.ok(new ApiResponse("Clear all chat data",true));
+    }
 }

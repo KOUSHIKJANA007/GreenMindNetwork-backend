@@ -10,4 +10,5 @@ public interface MessageService {
     MessageDto getMessageById(Integer messageId);
     List<MessageDto> getAllMessage();
     List<Message> getMessageByUser(Integer userId);
+    void deleteChatByUserId(Integer userId);
 }

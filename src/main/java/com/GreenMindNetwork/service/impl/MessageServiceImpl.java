@@ -38,4 +38,13 @@ public class MessageServiceImpl implements MessageService {
         User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         return this.messageRepo.findByUser(user);
     }
+
+    @Override
+    public void deleteChatByUserId(Integer userId) {
+        User user = this.userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        List<Message> messages = this.messageRepo.findByUser(user);
+        messages.forEach((message)->{
+            this.messageRepo.delete(message);
+        });
+    }
 }
