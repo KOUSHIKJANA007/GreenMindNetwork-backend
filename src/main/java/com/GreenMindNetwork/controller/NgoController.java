@@ -28,6 +28,8 @@ public class NgoController {
     private NgoService ngoService;
     @Autowired
     private BankService bankService;
+//    @Value("${app.s3.bucket}")
+//    private String path;
     @Value("${project.image.ngo}")
     private String path;
     @Autowired

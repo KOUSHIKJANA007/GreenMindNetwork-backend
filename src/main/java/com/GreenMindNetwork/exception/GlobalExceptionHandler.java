@@ -40,4 +40,12 @@ public class GlobalExceptionHandler {
 		ApiResponse apiResponse=new ApiResponse(message,true);
 		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.BAD_REQUEST);
 	}
+
+	@ExceptionHandler(ImageUploadException.class)
+	public ResponseEntity<ApiResponse> handleImageUploadException(ImageUploadException imageUploadException){
+		String message = imageUploadException.getMessage();
+		ApiResponse apiResponse=new ApiResponse(message,true);
+		return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }

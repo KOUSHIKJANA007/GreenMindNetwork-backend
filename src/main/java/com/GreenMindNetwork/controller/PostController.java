@@ -39,7 +39,8 @@ public class PostController {
 	
 	@Autowired
 	private FileService fileService;
-	
+//	@Value("${app.s3.bucket}")
+//	private String path;
 	@Value("${project.image.post}")
 	private String path;
 	

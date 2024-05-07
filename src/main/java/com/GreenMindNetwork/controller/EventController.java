@@ -25,6 +25,8 @@ public class EventController {
     private EventService eventService;
     @Autowired
     private FileService fileService;
+//    @Value("${app.s3.bucket}")
+//    private String path;
     @Value("${project.image.event}")
     private String path;
     @PostMapping("/{ngoId}")

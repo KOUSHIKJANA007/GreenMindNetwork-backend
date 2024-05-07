@@ -25,6 +25,8 @@ public class NgoSocialImageController {
     private NgoSocialImageService ngoSocialImageService;
     @Autowired
     private FileService fileService;
+//    @Value("${app.s3.bucket}")
+//    private String path;
     @Value("${project.image.social}")
     private  String path;
 

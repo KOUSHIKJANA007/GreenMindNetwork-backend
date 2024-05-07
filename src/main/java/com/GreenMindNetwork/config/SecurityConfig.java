@@ -116,7 +116,7 @@ public class SecurityConfig{
 	public static CorsConfigurationSource configurationSource() {
 		var corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowedMethods(List.of("*"));
-		corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/","http://13.201.209.254"));
+		corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173/","http://13.127.39.187"));
 		corsConfiguration.addAllowedHeader("Authorization");
 		corsConfiguration.addAllowedHeader("Content-Type");
 		corsConfiguration.addAllowedHeader("Accept");

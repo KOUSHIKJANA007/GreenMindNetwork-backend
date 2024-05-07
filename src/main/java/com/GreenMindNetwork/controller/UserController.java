@@ -55,7 +55,8 @@ public class UserController {
 	
     @Autowired
 	private ModelMapper modelMapper;
-	
+//	@Value("${app.s3.bucket}")
+//	private String path;
 	@Value("${project.image.user}")
 	private String path;
 
