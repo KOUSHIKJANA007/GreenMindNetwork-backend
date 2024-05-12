@@ -67,14 +67,19 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void deletePost(Integer postId) throws IOException {
 		Post post = this.postRepo.findById(postId).orElseThrow(()->new ResourceNotFoundException("Post", "id", postId));
-		boolean f=true;
-		while (f){
-			try {
-				this.fileService.deleteImage(path,post.getImageName());
-				f=false;
-			} catch (IOException e) {
-				continue;
-			}
+		if (!post.getImageName().equals("default.jpg")) {
+			Thread deleteImage = new Thread(() -> {
+				boolean f = true;
+				while (f) {
+					try {
+						this.fileService.deleteImage(path, post.getImageName());
+						f = false;
+					} catch (IOException e) {
+						continue;
+					}
+				}
+			});
+			deleteImage.start();
 		}
 		this.postRepo.delete(post);
 	}

@@ -125,16 +125,19 @@ public class UserServiceImpl implements UserService {
 		user.getRoles().removeAll(role11);
 		user.getStatus().remove(blockStatus);
 		this.userRepo.save(user);
-		boolean f=true;
 		if(!user.getImageName().equals("default.png")){
-			while (f){
-				try {
-					this.fileService.deleteImage(path,user.getImageName());
-					f=false;
-				} catch (IOException e) {
-					continue;
+			Thread deleteImage=new Thread(()->{
+				boolean f=true;
+				while (f){
+					try {
+						this.fileService.deleteImage(path,user.getImageName());
+						f=false;
+					} catch (IOException e) {
+						continue;
+					}
 				}
-			}
+			});
+			deleteImage.start();
 		}
 		this.userRepo.delete(user);
 	}

@@ -69,15 +69,20 @@ public class NgoSocialImageServiceImpl implements NgoSocialImageService {
     @Override
     public void deleteNgoSocialImage(Integer socialId) throws IOException {
         NgoSocialImage ngoSocialImage = this.ngoSocialImageRepo.findById(socialId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", socialId));
-        boolean f = true;
-        while (f) {
-            try {
-                this.fileService.deleteImage(path, ngoSocialImage.getImage());
-                f = false;
-            } catch (IOException e) {
-                continue;
-            }
+        if(!ngoSocialImage.getImage().equals("default.jpg")) {
+            Thread deleteImage = new Thread(() -> {
+                boolean f = true;
+                while (f) {
+                    try {
+                        this.fileService.deleteImage(path, ngoSocialImage.getImage());
+                        f = false;
+                    } catch (IOException e) {
+                        continue;
+                    }
 
+                }
+            });
+            deleteImage.start();
         }
         this.ngoSocialImageRepo.delete(ngoSocialImage);
     }

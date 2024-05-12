@@ -34,6 +34,7 @@ public class MessageController {
         simpMessagingTemplate.convertAndSendToUser(messageDto.getReceiverName(),"/private",messageDto);
         Message message=new Message();
         message.setContent(messageDto.getContent());
+        message.setReceiverName(messageDto.getReceiverName());
         message.setUser(user);
         this.messageRepo.save(message);
         return ResponseEntity.ok(messageDto);

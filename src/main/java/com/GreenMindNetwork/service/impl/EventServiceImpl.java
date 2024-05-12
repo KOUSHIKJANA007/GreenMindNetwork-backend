@@ -59,14 +59,19 @@ public class EventServiceImpl implements EventService {
     @Override
     public void deleteEvent(Integer eventId) throws IOException {
         Event event = this.eventRepo.findById(eventId).orElseThrow(() -> new ResourceNotFoundException("Event", "id", eventId));
-        boolean f = true;
-        while (f) {
-            try {
-                this.fileService.deleteImage(path, event.getImage());
-                f=false;
-            } catch (IOException e) {
-                continue;
-            }
+        if(!event.getImage().equals("default.jpg")) {
+            Thread deleteImage = new Thread(() -> {
+                boolean f = true;
+                while (f) {
+                    try {
+                        this.fileService.deleteImage(path, event.getImage());
+                        f = false;
+                    } catch (IOException e) {
+                        continue;
+                    }
+                }
+            });
+            deleteImage.start();
         }
         this.eventRepo.delete(event);
     }
