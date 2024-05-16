@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,4 +24,6 @@ public class Event {
     private String image;
     @ManyToOne
     private Ngo ngo;
+    @OneToMany(mappedBy = "event",cascade = CascadeType.ALL)
+    List<EventProgress> eventProgresses=new ArrayList<>();
 }
