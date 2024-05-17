@@ -3,16 +3,19 @@ package com.GreenMindNetwork.controller;
 import com.GreenMindNetwork.payloads.*;
 import com.GreenMindNetwork.service.EmailService;
 import com.GreenMindNetwork.service.FileService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.GreenMindNetwork.entities.User;
@@ -23,6 +26,7 @@ import com.GreenMindNetwork.service.UserService;
 import jakarta.validation.Valid;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -46,7 +50,6 @@ public class AuthController {
 	private  EmailService emailService;
 	@Value("${project.image.user}")
 	private String path;
-
 	@Value("${project.image.event}")
 	private String eventPath;
 	@Value("${project.image.social}")
@@ -87,5 +90,13 @@ public class AuthController {
 			 throw new ApiException("invalid username and password");
 		}
 		
+	}
+	@GetMapping(value = "/logo/image/{imagename}",produces = MediaType.IMAGE_JPEG_VALUE)
+	public void downloadImage(
+			@PathVariable("imagename") String imagename,
+			HttpServletResponse response) throws IOException{
+		InputStream resource = this.fileService.getResource(path, imagename);
+		response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+		StreamUtils.copy(resource, response.getOutputStream());
 	}
 }
